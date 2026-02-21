@@ -8,6 +8,7 @@ import Planner from './pages/Planner'
 import NotesVault from './pages/NotesVault'
 import Habits from './pages/Habits'
 import FileLocker from './pages/FileLocker'
+import SetupConnection from './pages/SetupConnection'
 
 const NAV_ITEMS = [
     { path: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -122,26 +123,42 @@ function AppContent() {
 }
 
 export default function App() {
+    // Detection for missing Vercel environment variable
+    const isMissingApiUrl = import.meta.env.PROD && !import.meta.env.VITE_API_URL && !localStorage.getItem('aura_api_url')
+
+    const toaster = (
+        <Toaster
+            position="top-right"
+            toastOptions={{
+                style: {
+                    background: 'rgba(255,255,255,0.95)',
+                    backdropFilter: 'blur(12px)',
+                    border: '1px solid rgba(201,168,76,0.2)',
+                    borderRadius: '16px',
+                    boxShadow: '0 8px 32px rgba(201,168,76,0.12)',
+                    color: '#1a1a1a',
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '14px',
+                },
+                success: { iconTheme: { primary: '#C9A84C', secondary: '#FFF' } },
+                error: { iconTheme: { primary: '#ef4444', secondary: '#FFF' } },
+            }}
+        />
+    )
+
+    if (isMissingApiUrl) {
+        return (
+            <BrowserRouter>
+                {toaster}
+                <SetupConnection />
+            </BrowserRouter>
+        )
+    }
+
     return (
         <BrowserRouter>
             <AuthProvider>
-                <Toaster
-                    position="top-right"
-                    toastOptions={{
-                        style: {
-                            background: 'rgba(255,255,255,0.95)',
-                            backdropFilter: 'blur(12px)',
-                            border: '1px solid rgba(201,168,76,0.2)',
-                            borderRadius: '16px',
-                            boxShadow: '0 8px 32px rgba(201,168,76,0.12)',
-                            color: '#1a1a1a',
-                            fontFamily: 'Inter, sans-serif',
-                            fontSize: '14px',
-                        },
-                        success: { iconTheme: { primary: '#C9A84C', secondary: '#FFF' } },
-                        error: { iconTheme: { primary: '#ef4444', secondary: '#FFF' } },
-                    }}
-                />
+                {toaster}
                 <AppContent />
             </AuthProvider>
         </BrowserRouter>

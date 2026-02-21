@@ -2,14 +2,27 @@ import axios from 'axios'
 
 // In production (Vercel), VITE_API_URL points to the Render backend.
 // In dev, Vite proxy handles /api → localhost:3001
-const BASE_URL = import.meta.env.VITE_API_URL
+export let BASE_URL = import.meta.env.VITE_API_URL
     ? `${import.meta.env.VITE_API_URL}/api`
     : '/api'
+
+const storedUrl = localStorage.getItem('aura_api_url')
+if (storedUrl) {
+    BASE_URL = `${storedUrl}/api`
+}
 
 const api = axios.create({
     baseURL: BASE_URL,
     timeout: 15000,
 })
+
+export const setCustomApiUrl = (url) => {
+    const cleanUrl = url.replace(/\/$/, '')
+    localStorage.setItem('aura_api_url', cleanUrl)
+    window.location.reload()
+}
+
+export const checkHealth = (url) => axios.get(`${url.replace(/\/$/, '')}/api/health`).then(r => r.data)
 
 // ✅ Interceptor: automatically attach JWT token from localStorage to EVERY request
 api.interceptors.request.use(config => {
