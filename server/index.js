@@ -7,17 +7,8 @@ const requireAuth = require('./middleware');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-const allowedOrigins = [
-    'http://localhost:5173',
-    'http://localhost:3000',
-    process.env.FRONTEND_URL,
-].filter(Boolean);
-
 app.use(cors({
-    origin: (origin, cb) => {
-        if (!origin || allowedOrigins.some(o => origin.startsWith(o))) return cb(null, true);
-        cb(new Error('Not allowed by CORS'));
-    },
+    origin: (origin, cb) => cb(null, origin || true),
     credentials: true,
 }));
 app.use(express.json());
