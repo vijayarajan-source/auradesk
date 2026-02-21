@@ -1,0 +1,6 @@
+node_modules/
+auradesk.db
+uploads/
+.env
+*.log
+dist/
